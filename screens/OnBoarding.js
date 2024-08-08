@@ -1,21 +1,71 @@
-import React from "react";
-import {Text, View,TextInput, StyleSheet,Image,Pressable} from 'react-native'
+import React, { useState, useEffect, useContext } from "react";
+import {Text, View,TextInput, StyleSheet,Image,Pressable, KeyboardAvoidingView} from 'react-native'
 import { validateEmail, validateName } from "../utils/validate";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useNavigation} from '@react-navigation/native'
+import {AppContext } from "../context/AppContext";
 
 export default function OnBoarding() {
 
     //hooks area:
     const [email, setEmail] = React.useState('');
     const [name, setName] = React.useState('');
+    const [isButtonOn, setIsButtonOn] = useState(false);
+    //getting our save profile function from context
 
+    const navigate = useNavigation();
     //validation area
-    const isEmailValid = validateEmail(email);
-    const isNameValid = validateName(name)
+    
+    
+    useEffect(() => {
+        const isEmailValid = validateEmail(email);
+        const isNameValid = validateName(name)
+
+        if (!isEmailValid && !isNameValid)
+             {setIsButtonOn(true)}
+        else {setIsButtonOn(false)};
+      }, [email, name]);
+
+      
+
+    //saving user info area
+    const handleSubscribeRequest = () => {
+        try {
+          let userData = {
+            firstName: name,
+            lastName: "",
+            mail: email,
+            phone: "",
+            imagePath: "",
+          };
+          AsyncStorage.setItem("userData", JSON.stringify(userData));
+          AsyncStorage.setItem("isOnboardingCompleted", "true");
+          let preferences = {
+            orderStatus: true,
+            passwordChanges: true,
+            specialOffers: true,
+            newsletter: true,
+          };
+          AsyncStorage.setItem("preferences", JSON.stringify(preferences));
+          alert("thanks for signing in")
+          let wentToNewTab = false;
+          setInterval(() => {
+            if (!wentToNewTab) {
+              navigate.push("user Profile");
+              wentToNewTab = true;
+            }
+          }, 1000);
+        } catch (err) {
+          alert("error, unable to sign in")
+        }
+      };
+
+
 
     //render area
     return(
-    <View style={{flex: 1}}>
         
+    <View style={{flex: 1}}>
         
         <View style={styler.headerContainer}>
             <Image source={require("../assets/Logo.png")}/>
@@ -27,6 +77,14 @@ export default function OnBoarding() {
             <Text>Let us get to know you</Text>
 
             <TextInput
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            placeholder={"type your email"}
+            style={styler.input}
+            />
+
+            <TextInput
             value={name}
             onChangeText={setName}
             keyboardType="default"
@@ -34,13 +92,7 @@ export default function OnBoarding() {
             style={styler.input}
             />
 
-            <TextInput
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            placeholder={"type your email"}
-            style={styler.input}
-            />
+
 
         </View>
 
@@ -49,16 +101,15 @@ export default function OnBoarding() {
          */}
         <View style={styler.footerContainer}>
             <Pressable 
-            onPress={()=> alert('thanks for subscribing,\nstay tuned!')}
-            style = {!isEmailValid && !isNameValid ? styler.buttonDisabled : styler.buttonWrapper}
+            onPress={handleSubscribeRequest }
+            style = {[styler.buttonWrapper, isButtonOn && styler.buttonDisabled]}
             // style={[styler.buttonWrapper, !isEmailValid&&!isNameValid && styler.buttonDisabled]}
-            disabled={!isEmailValid && !isNameValid}
+            disabled={isButtonOn}
             >
                 <Text>Next</Text>
             </Pressable>
         
         </View>
-
 
     </View>
 );}
