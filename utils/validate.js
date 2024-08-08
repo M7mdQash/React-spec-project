@@ -11,3 +11,12 @@ export const validateName = (name) =>{
 
 
 }
+
+export function calculateImageText(path, lName, fName) {
+  if (lName === '') {
+    return (fName.substring(0, 2));
+  }
+  else {
+    return (fName.substring(0, 1) + lName.substring(0, 1));
+  }
+}
