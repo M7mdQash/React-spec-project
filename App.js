@@ -10,6 +10,7 @@ import OnBoarding from './screens/OnBoarding';
 import Profile from './screens/Profile';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Home from "./screens/Home";
 //=========================================
 const Stack = createNativeStackNavigator();
 
@@ -43,10 +44,14 @@ export default function App() {
         {onBoardingComplete ? 
         (<>
                 <Stack.Screen name="welcome" component={OnBoarding}/>
+                <Stack.Screen name = "home" component={Home} />
                 <Stack.Screen name="user Profile" component={Profile} />
+                
         </>)
         :
         (<>
+
+        <Stack.Screen name="home" component={Home} />
         <Stack.Screen name="user Profile" component={Profile} />
         <Stack.Screen name="welcome" component={OnBoarding}/>
         

@@ -10,6 +10,7 @@ import { MaskedTextInput } from 'react-native-mask-text';
 import Checkbox from 'expo-checkbox';
 import styles from '../assets/styles';
 import { Avatar } from '../components/Avatar';
+import HomeHeader from '../components/HomeHeader'
 
 //importing other components here
 
@@ -207,13 +208,20 @@ export default function Profile({navigation}){
         }));
 
 
-
+        function goToProfile() {
+            
+        }
+        function goToHome() {
+            navigation.navigate("home")
+        }
 
 
     //rendering area
     return(
         <>
         <View style={styles.container}>
+        <HomeHeader imagePath={imagePath} imageText={imageText} goToProfile={goToProfile} goToHome={goToHome} />
+
         <ScrollView style={{ flex: 1 }}>
                 <View style={{ marginVertical: 20 }}>
                     <Text style={styles.sectionTitle}>Personal Information</Text>
